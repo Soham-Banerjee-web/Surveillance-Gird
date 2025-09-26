@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - llm
+
+  llm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/app/src
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/app/src
+    ports:
+      - "5000:5000"
+    depends_on:
+      - llm
+
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/frontend:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  data:
